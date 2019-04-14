@@ -9,7 +9,7 @@
 </head>
 <body>
     <script>
-	    const { fromEvent, Observable, from } = rxjs;
+	    const { fromEvent, Observable, from, of } = rxjs;
         const { pluck } = rxjs.operators;
         const { filter } = rxjs.operators;
 
@@ -54,7 +54,91 @@
         setTimeout(function(){
             sub.unsubscribe();
         }, 5000);
+
+        /** 
+         *  Observable을 생성자로 만들면 에러 처리나 자원 해제와 같은 일들을 
+         *  해주어야 하기 때문에 Observable을 생성자로 만드는 것 보다 rxjs 
+         *  네임스페이스에서 제공하는 생성함수를 사용하는것이 Best Practice 이다.
+         */
         
+        /**
+         of(values: ...T, scheduler: Scheduler): Observable<T>
+         각각의 단일 데이터 값을 전달하는 Observable을 만들 때 사용한다. 모든 값이
+         전달되면 complete을 호출하고 구독을 자동으로 해제한다.
+        */
+        
+        of(10, 20, 30).subscribe({
+            next: console.log,
+            error: console.error,
+            complete: ()=>console.log("완료")
+        });
+
+        /**
+        range(start: number, count: number, scheduler: Scheduler): Observable
+        범위 내 수의 값들을 전달하는 Observable을 만들때 사용한다. 범위(start~count) 내의
+        값을 1씩 증가시킨 숫자 데이터를 전달한다. 모든 값이 전달되면 complete을 호출하고 구독을 
+        자동으로 해제한다.
+        */
+
+        const { range } = rxjs;
+        
+        range(1, 10).subscribe({
+            next: console.log,
+            error: console.error,
+            complete: () => console.log("완료")
+        });
+
+        /**
+        fromEvent(target: EventTargetLike, eventName: string. options: EventListenerOptions,
+        selector: SelectorMethodSignature<T>): Observable<T>
+        브라우저에서 발생하는 Event를 Observable로 만들 때 사용한다.
+
+        fromEvent로 만든 Observable은 에러가 발생하지 않는 이상 자동으로 Observable의 구독이
+        해제되지 않는다. 따라서 반드시 subsctiption의 unsubscribe를 호출하여 자원을 해제해야 한다.
+        */
+
+        const click$ = fromEvent(document, "click");
+        const subscription = click$.subscribe({
+            next: v=> console.log("click 이벤트 발생"),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+
+        setTimeout(function(){
+            subscription.unsubscribe();
+        },3000);
+        
+        /**
+        from(ish: ObservableInput<T>, scheduler: Scheduler): Observable<T>
+        배열, 배열 같은 객체, iterable 객체, Promise 등 거의 모든 데이터를 Observable로 
+        만들 때 사용한다.
+        */
+
+        /**
+        배열과 arguments나 nodelist와 같이 배열 형대를 가진 객체를 Observable로 만들 수 있다.
+        모든 값이 전달되면 complete을 호출하고 구독을 자동으로 해제한다.
+        */
+
+        from([10, 20, 30]).subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+
+        /**
+        Map, Set, String과 같은 Iterable 객체를 Observable로 만들 수 있다. 모든 값이 전달되면
+        Complete를 호출하고 구독을 자동으로 해제한다.
+        */
+
+        const map$ = from(new Map([[1,2],[2,4],[4,8]]));
+        map$.subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+    
+
+
     </script>
 </body>
 </html>
