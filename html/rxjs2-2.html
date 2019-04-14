@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from } = rxjs;
+        const { pluck } = rxjs.operators;
+        const { filter } = rxjs.operators;
+
+        const numbers$ = new Observable(function subscribe(observer){
+            let id;
+            try{
+                observer.next(1);
+                observer.next(2);
+                observer.next(3);
+
+                id = setInterval(function(){
+                    observer.next(new Date().toString());
+                }, 1000);
+                // throw new Error("데이터 전달 도중 에러가 발생했습니다");
+                observer.next({
+                    name: 'hong',
+                    country: 'korea'
+                });
+                // observer.complete();
+            } catch(e) {
+                observer.error(e);
+            }
+
+            // 이 함수는 subscription의 unsubscribe 호출시 실행되는 함수이다.
+            // subscribe함수에서 생성했던 이벤트 핸들러는 unsubscribe 호출시 해제해 주어야 한다.
+            return function() {
+                console.log("interval 제거");
+                clearInterval(id);
+            }
+        });
+        
+        console.log(numbers$);
+        const sub = numbers$.subscribe({
+            next: v => console.log(v),
+            complete: () => console.log('end'),
+            error: e => console.error(e)
+        });
+        
+        console.log(sub);
+        
+        
+        setTimeout(function(){
+            sub.unsubscribe();
+        }, 5000);
+        
+    </script>
+</body>
+</html>

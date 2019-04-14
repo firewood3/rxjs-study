@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent } = rxjs;
+        const { pluck } = rxjs.operators;
+        
+        const click$ = fromEvent(document, "click");
+        const clickEventOvserver = e => {
+            console.log(e);
+            console.log(e.currentTarget);
+        };
+        // click$.subscribe(clickEventOvserver);
+        
+        const currentTarget$ = fromEvent(document, "click").pipe(pluck("currentTarget"));
+        const currentTargetObserver = ct => {
+            console.log(ct);
+        }
+        
+        const sub = currentTarget$.subscribe(currentTargetObserver);
+        
+        sub.unsubscribe();
+        
+
+        const { from } = rxjs;
+        const { filter } = rxjs.operators;
+        
+        const users$ = from([{
+                name: 'Jon',
+                age: 12
+            }, {
+                name: 'james',
+                age: 55
+            }, {
+                name: 'lee',
+                age: 33
+            }
+        ]).pipe(filter(user=> user.age > 30));
+
+        const subscription = users$.subscribe({
+            next: user=>console.log(user),
+            error: err=>console.log(err),
+            complete: ()=>console.log('완료')
+        });
+        
+        subscription.unsubscribe();
+        
+        
+    </script>
+</body>
+</html>
