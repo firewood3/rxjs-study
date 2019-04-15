@@ -1,0 +1,95 @@
+## RxJS 간단 정리
+
+### 1부
+1. RxJS가 해결하려고 했던 문제1 - 입력 데이터 구조적 문제
+2. RxJS가 해결하려고 했던 문제2 - 상태 전파 문제
+3. RxJS가 해결하려고 했던 문제3 - 로직 오류
+4. 부록1. 1부를 마치며
+5. 부록2. 함수형 프로그래밍
+
+### 2부
+1. RxJS란 무엇인가?
+2. Observable 만들기
+3. RxJS의 핵심 - Observable
+4. RxJS 오퍼레이터를 살펴보기 전에
+5. 자동완성 UI 만들기
+6. 자동완성 UI 사용성 개선하기
+7. 자동완성 UI와 Subject
+8. 캐러셀 UI 만들기
+9. 캐러셀 UI 상태 관리하기
+10. 캐러셀 UI 애니메이션 만들기
+11. 부록1. RxJS의 Subjects
+12. 부록2. 자바스크립트 비동기 처리 과정과 RxJS 스케줄러
+
+***
+
+### 정리: 1부
+#### 웹 어플리케이션은 상태머신
+```code
+      상태
+       |
+입력값->로직->결과값
+```
+
+#### 웹 어플리케이션을 개발하면서 만나는 세가지 문제
+- 입력 오류: 데이터 입력 시점이 동기와 비동기로 나누어져있어서 오류 발생 가능성이 증가된다.
+- 상태 오류: B->A라는 의존성 있는 두 머신간에서 A 머신의 상태가 바뀌었는데 B 머신은 그 사실을 몰라 오류 발생 가능성이 증가 된다.
+- 로직 오류: 반목분 분기문 변수의 사용은 프로그램의 오류 가능성을 증가 시킨다.
+
+
+#### RxJS 이론
+- RxJS는 범용 데이터 흐름 제어 라이브러리이다.
+- RxJS를 사용하면 입력오류, 상태오류, 로직오류를 해결할 수 있다.
+    - 입력 오류의 해결: 동기로 입력된 데이터든 비동기로 입력된 데이터든 같은 형식으로 데이터를 처리할 수 있도록 하였다. (Observable / fromEvent / of)
+    - 상태 오류의 해결: 개선된 옵저버 패턴을 도입하므로써 두 머신간의 의존성을 낮추고 상태 전파를 push 방식(Reactive Programming 도입)으로 바꾸었다. (Observable / subscribe / operator)
+        - [옵저버 패턴](https://firewood3.github.io/design-pattern/observer_pattern/observer-pattern/V)
+        - Observer: 특정 머신의 변화를 감지해야 하는 머신
+        - Subject: 옵저버들에게 특정 머신의 변화를 알려주는 머신(Observable)
+        - Pull 방식: 데이터를 얻고자 하는 대상이 데이터를 직접 가져오는 방식
+        - Push 방식: 데이터를 얻고자 하는 대상(Observer)이 의존관계의 대상(Subject)으로부터 데이터를 제공받는 형식
+        - Reactive Programming: 머신간 데이터의 흐름이 자동으로 전파되는 프로그래밍 패러다임
+    - 로직 오류의 해결: 함수형 프로그래밍을 도입하므로써 로직 오류의 발생 가능성을 줄였다. (Operator 사용, 람다와 순수함수로 코딩)
+        - 함수형 프로그래밍: 자료 처리를 수학적 함수의 계산으로 취급하고 상태변경과 가변데이터를 피하려는 프로그래밍 패러다임
+        - 순수함수: 함수의 실행이 외부에 영향을 받지도 않고 외부에 영향을 끼치지 않는 함수
+        - Operator: collections과 함께 사용되는 함수를 다루는 함수로써 프로그래밍을 도아준다. (map, filter)
+
+
+<br>***Observable을 사용하면 동기 입력이든 비동기 입력이든 같은 형식으로 데이터 처리 가능하다!***
+<br>***Observable을 사용해라! 머신간 의존성이 분리된다.***
+<br>***Operator를 사용하고 순수함수로 코딩하는 습관을 들여라! 반복문, 분기문, 변수의 사용을 줄일 수 있다.***
+
+***
+
+### 정리: 2부-1,2 
+
+#### RxJS 클래스 정리
+- Observable: 시간을 축으로 연속적인 데이터를 저장하는 컬렉션을 표현한 객체
+- Observer: Observable에 의해 전달된 데이터를 소비하는 주체
+- Operators: Observable을 생성 및 조작하는 함수들
+- Subscription: Observable.prototype.subscribe의 반환값. Observable에게 데이터를 전달 받고 싶지 않을 경우 unsubscribe 메소드를 사용함
+
+#### 플러스
+- Pipe: 오퍼레이터들을 연결해주는 함수
+- pluck: 스트림에서 입력으로 들어온 객체의 특정 프로퍼티를 추출하는 오퍼레이터
+- filter: 스트림에서 입력으로 들어온 객체들 중 특정 조건에 맞는 객체만 추출하는 오퍼레이터
+
+#### Observable 생성자를 통해 Observable을 만들 수 있다.
+- new Observable
+- Observable.create
+
+#### rxjs 네임스페이스에 있는 생성함수로 Observable을 만들기
+of / range / fromEvent / from / interval
+
+#### empty / throwError / never 함수로 Observable 만들기
+- empty : complete된 Observable을 반환
+- throwError: error된 Observable을 반환
+- never: 종료되지 않은 Observable을 반환
+
+***옵저버블을 만들때 생성자를 통해 만들지 말고 생성함수로 만들어라!***
+
+***
+참고도서  
+제목: RxJS 퀵스타트  
+저자: 손찬욱  
+출판사: 루비페이퍼  
+

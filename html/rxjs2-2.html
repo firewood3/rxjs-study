@@ -136,9 +136,127 @@
             error: e=>console.log(e),
             complete: ()=>console.log("완료")
         });
-    
+        
+        /**
+
+        Promise도 Observable로 만들 수 있다. Promise가 성공(resolve)하면 데이터를 전달하고 complete을
+        호출하고 구독을 자동으로 해제한다. Promise가 실패(reject)하면 error를 호출하고 구독을 자동으로 해제한다.
+        */
+        
+        const success$ = from(Promise.resolve(100));
+        success$.subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+        
+        const fail$ = from(Promise.reject("에러"));
+        fail$.subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+        
+        /**
+        interval(period: number, scheduler: Scheduler): Observable
+        시간 간격마다 발생하는 데이터를 Observable로 만들때 interval을 사용한다.
+        지정된 시간 간격마다 0부터 1씩 증가하는 데이터를 만드는 Observable을 작성할 때 사용한다.
+        애니메이션과 같이 일정 간격의 시간마다 데이터 변경이 일어나는 작업을 할 때 주로 사용한다.
+        => interval의 구독을 해지하기 위해서는 반드시 subscription의 unsubscribe()를 해주어야한다.
+        */
+
+        const { interval } = rxjs;
+
+        const intervalSubscription = interval(1000).subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+        
+        setTimeout(function(){
+            intervalSubscription.unsubscribe();
+        }, 6000);
+
+        /**
+        empty(scheduler: Scheduler): Observable
+        empty는 Observable 완료 상태를 전달하는 Observable을 생성한다. 별칭으로 rxjs 
+        네임스페이스에서 EMPTY 값도 지원한다. empty는 항상 동일한 Observable 인스턴스를 반환한다.
+
+        텅빈 observable을 반환한다. 내부적으로 옵저버블을 생성하자마자 옵저버의 Complete를 바로 호출해버린다.
+        Observable.create(observer=>{
+            observer.complete();
+        });
+        */
+
+        const { empty } = rxjs;
+        const { map } = rxjs.operators;
+        console.log("empty------------------");
+
+        of(1, -2, 3)
+        .pipe(map(num=>num < 0 ? empty() : num))
+        .subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료 empty")
+        });
+        console.log("empty------------------");
+
+        /**
+        throwError(error: any, scheduler: Scheduler): Observable
+        throwError는 Observable 에러 상태를 전달하는 Observable을 생성한다.
+        
+        사용자에게 에러가 발생했다는 것을 알려주기 위해 바로 에러 상태를 전달하고 
+        구독을 해지한다.
+        
+        const error;
+
+        Observable.create(observer = {
+            observer.error(new Error(error));
+        });
+        */
+        
+        const { throwError } = rxjs;
+
+        console.log("throwError------------------");
+        of(1,-2, 3)
+        .pipe(map(n=>n < 0 ? throwError("number는 0보다 커야한다.") : n))
+        .subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료 throwError")
+        });
+        console.log("throwError------------------");
+        
+        /**
+        never는 아무것도 하지 않는 Observable을 생성한다. 별칭으로 rxjs 네임스페이스에
+        NEVER  값도 지원한다.
+        
+        never(scheduler: Schdeulder): Observable
+
+        empty, throwError 함수와 다르게 Observable의 상태를 변경하지 않는다.
+        이 함수는 현재의 전달된 데이터를 전달하지 않고자 할 때 사용한다.
+
+        Observable.create(observer=> {
+
+        });
+        */
+
+        const { NEVER } = rxjs;
+        console.log("NEVER------------------");
+        of(1, -2, 3)
+        .pipe(map(n=> n < 0 ? NEVER : n))
+        .subscribe({
+            next: v=>console.log(v),
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료 NEVER")
+        });
+        console.log("NEVER------------------");
+        
 
 
+        
+        
+        
     </script>
 </body>
 </html>
