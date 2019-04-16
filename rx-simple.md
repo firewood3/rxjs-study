@@ -23,21 +23,21 @@
 
 ***
 
-### 정리: 1부
-#### 웹 어플리케이션은 상태머신
+## 정리: 1부
+### 웹 어플리케이션은 상태머신
 ```code
       상태
        |
 입력값->로직->결과값
 ```
 
-#### 웹 어플리케이션을 개발하면서 만나는 세가지 문제
+### 웹 어플리케이션을 개발하면서 만나는 세가지 문제
 - 입력 오류: 데이터 입력 시점이 동기와 비동기로 나누어져있어서 오류 발생 가능성이 증가된다.
 - 상태 오류: B->A라는 의존성 있는 두 머신간에서 A 머신의 상태가 바뀌었는데 B 머신은 그 사실을 몰라 오류 발생 가능성이 증가 된다.
 - 로직 오류: 반목분 분기문 변수의 사용은 프로그램의 오류 가능성을 증가 시킨다.
 
 
-#### RxJS 이론
+### RxJS 이론
 - RxJS는 범용 데이터 흐름 제어 라이브러리이다.
 - RxJS를 사용하면 입력오류, 상태오류, 로직오류를 해결할 수 있다.
     - 입력 오류의 해결: 동기로 입력된 데이터든 비동기로 입력된 데이터든 같은 형식으로 데이터를 처리할 수 있도록 하였다. (Observable / fromEvent / of)
@@ -60,11 +60,11 @@
 
 ***
 
-### 정리: 2부-1,2 
+## 정리: 2부-1,2 
 
-#### RxJS 클래스 정리
+#### RxJS
 - Observable: 시간을 축으로 연속적인 데이터를 저장하는 컬렉션을 표현한 객체
-- Observer: Observable에 의해 전달된 데이터를 소비하는 주체
+- Observer: Observable이 전달하는 데이터를 소비하는 주체
 - Operators: Observable을 생성 및 조작하는 함수들
 - Subscription: Observable.prototype.subscribe의 반환값. Observable에게 데이터를 전달 받고 싶지 않을 경우 unsubscribe 메소드를 사용함
 
@@ -86,6 +86,36 @@ of / range / fromEvent / from / interval
 - never: 종료되지 않은 Observable을 반환
 
 ***옵저버블을 만들때 생성자를 통해 만들지 말고 생성함수로 만들어라!***
+
+***
+## 불변객체 Observable
+ES5 Array의 고차함수들이 바환값으로 새로운 Array객체를 반환하여 각각에 영향을 미치지 않도록 하는것과 같이 RxJS의 오퍼레이터는 항상 새로운 Observable을 반환함으로써 Array의 고차함수과 같이 불변 객체(immutable object)를 반환한다.
+
+고차함수의 불변객체
+```js
+var arr = [1,2,3];
+var mappedArr = arr.map(v=>v);
+
+console.log(arr === mappedArr); // false
+```
+
+Operator Map은 입력으로 들어온 Obserable을 사용해 또 다른 Observable을 생성함
+```js
+map = function(transfromationFx) {
+    const source =this;
+    const result = new rxjs.Observable(observer => {
+        // 새로운 Observable은 현재의 Observable을 subscribe 한다.
+        source.subscribe(
+            // 현재의 Observable에서 전달된 데이터를 변경하여 전달한다.
+            function(x) {observer.next(transformationFn(x))},
+            function(err) {observer.error(err);},
+            function() {observer.complete();}
+        )
+    })
+}
+```
+
+
 
 ***
 참고도서  
