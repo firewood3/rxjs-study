@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of } = rxjs;
+        const { pluck } = rxjs.operators;
+        const { filter } = rxjs.operators;
+        const { tap } = rxjs.operators;
+
+        const click$ = fromEvent(document, "click")
+                    .pipe(
+                        tap(x=> console.log(x)),
+                        pluck("clientX")
+                    );
+        
+        const subscription = click$.subscribe({
+            next: v=> {console.log("click 이벤트 발생"); console.log(v) },
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+
+        setTimeout(function(){
+            subscription.unsubscribe();
+        },10000);
+        
+    </script>
+</body>
+</html>
