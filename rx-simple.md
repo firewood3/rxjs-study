@@ -133,6 +133,7 @@ map = function(transfromationFx) {
 <br>=>외부에서 조작 불가능하도록 만들어놓음.
 
 함수 VS Observable VS Promise
+
 | 구분  |  함수 | Observable  | Promise |
 | ---- | ---- | ---- | ---- |
 | 정의 | 함수 선언 | Observable 객체 생성 | Promise 객체 생성 |
