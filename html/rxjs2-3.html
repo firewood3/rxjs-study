@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of } = rxjs;
+        const { pluck } = rxjs.operators;
+        const { filter } = rxjs.operators;
+        const { tap } = rxjs.operators;
+
+        const click$ = fromEvent(document, "click")
+                    .pipe(
+                        tap(x=> console.log(x)),
+                        pluck("clientX")
+                    );
+        
+        const subscription = click$.subscribe({
+            next: v=> {console.log("click 이벤트 발생"); console.log(v) },
+            error: e=>console.log(e),
+            complete: ()=>console.log("완료")
+        });
+
+        setTimeout(function(){
+            subscription.unsubscribe();
+        },10000);
+        
+        /**
+        1.1 함수와 Observable
+        */
+
+        function foo(value) {
+            console.log(`I'am function ${value}`);
+            return vlaue+1;
+        }
+
+        // 함수는 호출 시점을 늦출수 있다 => ajax 
+
+        // 함수는 호출할때까지 지연할 수 있다. Observable도 subscribe 할때까지 지연할 수 있다.
+
+        // 함수는 개발자가 요청하는 형태(PULL),  Observable은 데이터를 개발자에게 전달하는 형태(PUSH)
+        
+        // 함수는 호출 시 반환값이 딱 한개, Observable은 Observer.next를 호출하여 구독 이후 여러개의 데이터를 전달할 수 있다.
+        // (이벤트 옵저버블은 내부적으로 Observer.next가 여러번 호출되는 형태이다.)
+        // (옵저버 패턴의 서브젝트 Update()함수가 계속 호출되는것과 같음)
+
+        // 성공하면 1을 전달하고 오류가 발생했을 때는 "error promise"라는 문자열을 전달한다.
+        // Promise도 Observable과 같이 데이터를 Promise로 만드는 일종의 정의 작업을 한다.
+        const promise = new Promise((resolve, reject) => {
+            console.log("create Promise");
+            try {
+                resolve(1);
+            } catch(e) {
+                reject("error promise");
+            }
+        });
+
+        // Promise의 상태(resolve, reject)를 확인하고자 할때는 then이라는 과정을 거친다.
+        // then은 성공(resolve)했을 때와 실패(reject)했을 때의 상태를 처리할 수 있는 함수를 받는다.
+        promise.then(
+            value=>console.log(`처음 promise ${value}`),
+            error=>console.error(`promise ${error}`)
+        );
+        promise.then(
+            value=>console.log(`다음 promise ${value}`),
+            error=>console.error(`promise ${error}`)
+        );
+        // 상태의 결과 또한 개발자의 호출에 의해 전달되지 않고 Promise에 의해 전달된다. Promise도 Observable과 같이 Push방식으로 데이터를 전달한다.
+        // 반면 Promise도 함수나 Observable과 같이 then을 호출할 때마다 동일한 값을 받을 수 있다. 하지만 동작 방식은 함수나 Observable과 다르다.
+        // 그 이유는 Promise는 Observable 함수와 다르게 정의부가 생성 시 딱 한번 호출되고, 상태(resolve, reject)가 결정되면 변경되지 않기 때문이다.
+        // Promise의 then은 호출될 때 이미 '결정된 상탯값'만을 반환하기 때문에 동일한 값을 게속 받ㅇ르 수 있는 것이다.
+        // 그러므로 이는 레이지(Lazy)하게 동작하지 않는다. 레이지로 동작하려면 호출되기 전까지는 그 값이 계속 변경 가능해야 한다.
+
+        // Observable에 console.log를 찍은 것이 아니라 매개변수인 subscribe() 함수에 console.log를 찍은 것이다.
+        const number$ = Observable.create(observer=>{
+            console.log("create Observable");
+            try {
+                observer.next(1);
+            } catch(e) {
+                observer.error("error observable");
+            } finally {
+                observer.complete();
+            }
+        });
+        
+
+        number$.subscribe(
+            value => console.log(`처음 observable ${value}`),
+            error => console.log(`처음 observable ${value}`)
+        );
+
+        number$.subscribe(
+            value => console.log(`다음 observable ${value}`),
+            error => console.log(`다음 observable ${value}`)
+        );
+
+        // 구독 취소
+
+
+    </script>
+</body>
+</html>

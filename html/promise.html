@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of } = rxjs;
+        const { pluck } = rxjs.operators;
+        const { filter } = rxjs.operators;
+        const { tap } = rxjs.operators;
+
+        const promise = new Promise((resolve, reject) => {
+            console.log("create Promise");
+            try {
+                resolve(1);
+            } catch(e) {
+                reject("error promise");
+            }
+        });
+        promise.then(
+            value=>console.log(`처음 promise ${value}`),
+            error=>console.error(`promise ${error}`)
+        );
+        promise.then(
+            value=>console.log(`다음 promise ${value}`),
+            error=>console.error(`promise ${error}`)
+        );
+
+        const number$ = Observable.create(observer=>{
+            console.log("create Observable");
+            try {
+                observer.next(1);
+            } catch(e) {
+                observer.error("error observable");
+            } finally {
+                observer.complete();
+            }
+        });
+        
+
+        // number$.subscribe(
+        //     value => console.log(`처음 observable ${value}`),
+        //     error => console.log(`처음 observable ${value}`)
+        // );
+
+        // number$.subscribe(
+        //     value => console.log(`다음 observable ${value}`),
+        //     error => console.log(`다음 observable ${value}`)
+        // );
+    </script>
+</body>
+</html>

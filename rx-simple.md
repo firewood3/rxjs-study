@@ -10,16 +10,17 @@
 ### 2부
 1. RxJS란 무엇인가?
 2. Observable 만들기
-3. RxJS의 핵심 - Observable
-4. RxJS 오퍼레이터를 살펴보기 전에
-5. 자동완성 UI 만들기
+3. <U>RxJS의 핵심 - Observable</U>
+4. <U>RxJS 오퍼레이터를 살펴보기 전에</U>
+5. <U>자동완성 UI 만들기</U>
 6. 자동완성 UI 사용성 개선하기
 7. 자동완성 UI와 Subject
-8. 캐러셀 UI 만들기
-9. 캐러셀 UI 상태 관리하기
-10. 캐러셀 UI 애니메이션 만들기
 11. 부록1. RxJS의 Subjects
 12. 부록2. 자바스크립트 비동기 처리 과정과 RxJS 스케줄러
+
+
+### 3부
+1. 버스 노선 조회 서비스 살펴보기
 
 ***
 
@@ -119,8 +120,64 @@ map = function(transfromationFx) {
 }
 ```
 
+***
+## 정리: 2부-3,4
+
+### Observable의 특징
+- 모든 데이터는 Observable 인스턴스로 만들 수 있다.
+- Observable은 읽기 전용(read-only)이다. (Observable이 Observer로부터 데이터를 받는 것을 허용하지 않게 하기 위해)
+ <br>=>옵저버 패턴에서 옵저버는 서브젝트로부터 데이터를 제공받는데, 반대로 옵저버에서 서브젝트로 데이터를 주게끔 프로그래밍 할 수도 있다. 이것은 데이터가 양방향으로 흐는 것을 의미하고 프로그래밍을 복잡하게 만든다. 그래서 Observable은 Subscribe를 통해 옵저버에게 데이터를 전달할 수는 있지만, 반대로 Observable은 옵저버로부터 데이터를 전달 받을 수는 없다.
+- Observable은 리엑티브하다.
+<br>=>Operator 사용과 옵저버 패턴의 PUSH 방식
+- Observable은 불변 객체(immutable object)다.
+<br>=>외부에서 조작 불가능하도록 만들어놓음.
+
+함수 VS Observable VS Promise
+| 구분  |  함수 | Observable  | Promise |
+| ---- | ---- | ---- | ---- |
+| 정의 | 함수 선언 | Observable 객체 생성 | Promise 객체 생성 |
+| 호출 | 함수 호출 | Observable.subscribe | Promise.then<br>=>new Promise([logic])시 로직 바로 호출됨<br>=>then은 Promise의 resolve() 결과만 호출하는 것임. |
+| 호출 시 정의부 실행 여부 | 매번 정의부 실행  | 매번 정의부 실행<br>=>Observable은 subscribe에 로직을 정의한다.<br>=>호출 시 매번 subscribe 함수의 정의부가 실행된다.  | 생성 시 단 한번 호출<br>=>Promise 생성 시 정의한 로직이 바로 실행된다.<br>=>then() 호출시 정의부가 실행되지 않는다. |
+| 지연(Lazy) 가능 여부<br>=>객체 생성 후<br>=>정의부 지연 가능여부 | O <br>=>콜백함수의 경우 함수 선언 후<br>정의부 실행이 지연된다. | O<br>=>Subscribe의 실행을 지연 시킬 수 있음.  | X(Promise는 정해진 상태값만 호출된다.)<br>=>Promise 생성 로직에서 비동기 호출을 할 수는 있겠으나,<br>=>Promise 생성 후 다른방법(then)으로 실행로직을 지연시킬 수 없다. |
+| 데이터 | 한 개<br>=>함수 리턴값은 한번만 리턴함 | 여러 개<br>=>subscribe함수 내에서 next()를 여러번 호출하여<br>=>데이터 스트림을 반환할 수 있음 | 한 개<br>=>Promise 정의부에서는 resolve()함수를 한번만 호출 가능 |
+| 에러 처리 지원 | 별도로 없음 | error 상태<br>=>subscribe에서 throwError를 던지고<br>=>Ovserver에서 error로 잡음 | reject 상태<br>=>Promise 로직 선언부에서 reject()호출하고<br>=>catch()로 reject()결과를 받을 수 있음 |
+| 취소 지원 | X | O<br>=>Observable의 반환값인 subscription의<br>=>unsubscribe() 함수로 취소 가능 | X |
+| 전달 방식 | Pull | Push<br>=>subscribe 로직부분에서 next()로<br>=>전달한 상태가 Observer로 전달됨. | Push<br>=>Promise선언부의 resolve()로<br>=>전달한 상태가 then()으로 전달됨. |
 
 
+Observable
+```js
+const click$ = fromEvent(document, "click")
+            .pipe(
+                tap(x=> console.log(x)),
+                pluck("clientX")
+            );
+
+const subscription = click$.subscribe({
+    next: v=> {console.log("click 이벤트 발생"); console.log(v) },
+    error: e=>console.log(e),
+    complete: ()=>console.log("완료")
+});
+setTimeout(function(){
+    subscription.unsubscribe();
+},10000);
+```
+
+Promise
+```js
+let myFirstPromise = new Promise((resolve, reject) => {
+    setTimeout(function(){
+        // 비동기 성공시 resolve() 함수 호출
+        resolve("Success!");
+        // 비동기 실패시 reject() 함수 호출
+        reject("reject!");
+    }, 1000);
+});
+myFirstPromise
+    .then(value => {console.log(value)})
+    .catch(error => {console.log(error)})
+    ;
+```
 ***
 참고도서  
 제목: RxJS 퀵스타트  
