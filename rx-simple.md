@@ -133,16 +133,17 @@ map = function(transfromationFx) {
 <br>=>외부에서 조작 불가능하도록 만들어놓음.
 
 함수 VS Observable VS Promise
-| 구분  |  함수 | Observable  | Promise |
-| ---- | ---- | ---- | ---- |
-| 정의 | 함수 선언 | Observable 객체 생성 | Promise 객체 생성 |
-| 호출 | 함수 호출 | Observable.subscribe | Promise.then<br>=>new Promise([logic])시 로직 바로 호출됨<br>=>then은 Promise의 resolve() 결과만 호출하는 것임. |
-| 호출 시 정의부 실행 여부 | 매번 정의부 실행  | 매번 정의부 실행<br>=>Observable은 subscribe에 로직을 정의한다.<br>=>호출 시 매번 subscribe 함수의 정의부가 실행된다.  | 생성 시 단 한번 호출<br>=>Promise 생성 시 정의한 로직이 바로 실행된다.<br>=>then() 호출시 정의부가 실행되지 않는다. |
-| 지연(Lazy) 가능 여부<br>=>객체 생성 후<br>=>정의부 지연 가능여부 | O <br>=>콜백함수의 경우 함수 선언 후<br>정의부 실행이 지연된다. | O<br>=>Subscribe의 실행을 지연 시킬 수 있음.  | X(Promise는 정해진 상태값만 호출된다.)<br>=>Promise 생성 로직에서 비동기 호출을 할 수는 있겠으나,<br>=>Promise 생성 후 다른방법(then)으로 실행로직을 지연시킬 수 없다. |
-| 데이터 | 한 개<br>=>함수 리턴값은 한번만 리턴함 | 여러 개<br>=>subscribe함수 내에서 next()를 여러번 호출하여<br>=>데이터 스트림을 반환할 수 있음 | 한 개<br>=>Promise 정의부에서는 resolve()함수를 한번만 호출 가능 |
-| 에러 처리 지원 | 별도로 없음 | error 상태<br>=>subscribe에서 throwError를 던지고<br>=>Ovserver에서 error로 잡음 | reject 상태<br>=>Promise 로직 선언부에서 reject()호출하고<br>=>catch()로 reject()결과를 받을 수 있음 |
+
+| 구분  |  함수 | Observable  | Promise | 
+| ---- | ---- | ---- | ---- | 
+| 정의 | 함수 선언 | Observable 객체 생성 | Promise 객체 생성 | 
+| 호출 | 함수 호출 | Observable.subscribe | Promise.then<br>=>new Promise([logic])시 로직 바로 호출됨<br>=>then은 Promise의 resolve() 결과만 호출하는 것임. | 
+| 호출 시 정의부 실행 여부 | 매번 정의부 실행  | 매번 정의부 실행<br>=>Observable은 subscribe에 로직을 정의한다.<br>=>호출 시 매번 subscribe 함수의 정의부가 실행된다.  | 생성 시 단 한번 호출<br>=>Promise 생성 시 정의한 로직이 바로 실행된다.<br>=>then() 호출시 정의부가 실행되지 않는다. | 
+| 지연(Lazy) 가능 여부<br>=>객체 생성 후<br>=>정의부 지연 가능여부 | O <br>=>콜백함수의 경우 함수 선언 후<br>정의부 실행이 지연된다. | O<br>=>Subscribe의 실행을 지연 시킬 수 있음.  | X(Promise는 정해진 상태값만 호출된다.)<br>=>Promise 생성 로직에서 비동기 호출을 할 수는 있겠으나,<br>=>Promise 생성 후 다른방법(then)으로 실행로직을 지연시킬 수 없다. | 
+| 데이터 | 한 개<br>=>함수 리턴값은 한번만 리턴함 | 여러 개<br>=>subscribe함수 내에서 next()를 여러번 호출하여<br>=>데이터 스트림을 반환할 수 있음 | 한 개<br>=>Promise 정의부에서는 resolve()함수를 한번만 호출 가능 | 
+| 에러 처리 지원 | 별도로 없음 | error 상태<br>=>subscribe에서 throwError를 던지고<br>=>Ovserver에서 error로 잡음 | reject 상태<br>=>Promise 로직 선언부에서 reject()호출하고<br>=>catch()로 reject()결과를 받을 수 있음 | 
 | 취소 지원 | X | O<br>=>Observable의 반환값인 subscription의<br>=>unsubscribe() 함수로 취소 가능 | X |
-| 전달 방식 | Pull | Push<br>=>subscribe 로직부분에서 next()로<br>=>전달한 상태가 Observer로 전달됨. | Push<br>=>Promise선언부의 resolve()로<br>=>전달한 상태가 then()으로 전달됨. |
+| 전달 방식 | Pull | Push<br>=>subscribe 로직부분에서 next()로<br>=>전달한 상태가 Observer로 전달됨. | Push<br>=>Promise선언부의 resolve()로<br>=>전달한 상태가 then()으로 전달됨. | 
 
 
 Observable
