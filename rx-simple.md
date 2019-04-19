@@ -188,7 +188,7 @@ myFirstPromise
 
 
 ### merge-mergeAll-mergeMap
-[링크](https://firewood3.github.io/rxjs/javascript/rxjs-mergeMap/)
+[merge, mergeAll, mergeMap 정리](https://firewood3.github.io/rxjs/javascript/rxjs-mergeMap/)
 
 ### 자동완성 UI JSON 데이터 받아오기
 
