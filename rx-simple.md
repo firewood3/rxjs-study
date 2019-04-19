@@ -132,7 +132,7 @@ map = function(transfromationFx) {
 - Observable은 불변 객체(immutable object)다.
 <br>=>외부에서 조작 불가능하도록 만들어놓음.
 
-함수 VS Observable VS Promise
+### 함수 VS Observable VS Promise
 
 | 구분  |  함수 | Observable  | Promise | 
 | ---- | ---- | ---- | ---- | 
@@ -179,6 +179,40 @@ myFirstPromise
     .catch(error => {console.log(error)})
     ;
 ```
+
+### Operator
+- Operator: Observable을 생성 및 조작하는 함수
+- Marble diagram: 시간에 따른 데이터 흐름을 추상화한 도표
+- [마블 다이어그램 공식 사이트](https://rxmarbles.com/)
+- [RxJS 오퍼레이터 찾기](http://reactivex.io/rxjs/manual/overview.html#choose-an-operator)
+
+
+### merge-mergeAll-mergeMap
+[링크](https://firewood3.github.io/rxjs/javascript/rxjs-mergeMap/)
+
+### 자동완성 UI JSON 데이터 받아오기
+
+```js
+const user$ = fromEvent(document.getElementById("search"), "keyup")
+.pipe(
+      // 이벤트 발생 후 300ms가 지나면 Observable{이벤트}을 반환
+      debounceTime(300), 
+      // Observable{이벤트}에서 Observable{입력값}으로 변환
+      map(event => event.target.value),
+      // Observable{입력값}에서 현재의 입력값이 마지막 입력값과 다를때 Observable{입력값}을 반환
+      distinctUntilChanged(), 
+      // Observable{입력값}에서 공백이 아닌 입력값만 Observable{입력값}로 반환
+      filter(query => query.trim().length > 0), 
+      // Observable{입력값} => Observable{Observable{JSON}} => Observable{JSON}
+      mergeMap(query => ajax.getJSON(`https://api.github.com/search/users?q=${query}`)),
+);
+
+user$.subscribe(v => {
+    // json데이터를 UI에 넘겨주기
+    drawLayer(v.items);
+});
+```
+
 ***
 참고도서  
 제목: RxJS 퀵스타트  

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { of } = rxjs;
+        const { tap, map, mergeMap, mergeAll, merge } = rxjs.operators;
+    
+        console.log("---------merge-----------")
+        // merge는 여러개의 Observable들을 하나로 합쳐 Observable을 만드는 오퍼레이터
+        of('A','B','C')
+        .pipe(
+            // Observable{A, B, C, 1, 2, 3}
+            merge(of(1,2,3))
+        )
+        .subscribe(
+            value=>{console.log(value)}
+        );
+        
+        console.log("---------map + mergeAll-----------")
+        //mergeAll은 Observable안에 있는 여러개의 Observable을 꺼내서 하나의 Observable로 만드는 오퍼레이터
+        of('A','B','C')
+        .pipe(
+            //Observable{ Observable{A1,A2,A3}, Observable{B1,B2,B3}, Observable{C1,C2,C3}}
+            map(value=>of(value+1,value+2, value+3)),
+            //Observable{ A1, A2, A3, B1, B2, B3, C1, C2, C3}
+            mergeAll()
+        )
+        .subscribe(
+            value=>{console.log(value)}
+        );
+
+        console.log("---------mergeMap-----------")
+        // mergeMap은 map과 mergeAll을 합친 오퍼레이터
+        of('A','B','C')
+        .pipe(
+            //Observable{ A1, A2, A3, B1, B2, B3, C1, C2, C3}
+            mergeMap(value=>of(value+1,value+2, value+3))
+        )
+        .subscribe(
+            value=>{console.log(value)}
+        );
+    </script>
+</body>
+</html>
