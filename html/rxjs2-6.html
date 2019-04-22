@@ -6,6 +6,7 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 
     <style>
         .autocomplete{
@@ -37,6 +38,13 @@
             margin: 0px;
             padding: 0px;
         }
+        #loading {
+        	position: absolute;
+        	z-index: 2;
+        	top: 2px;
+        	right: 0px;
+        	display: none; /* 로딩바는 처음에는 노출되지 않아야 한다 */
+        }
     </style>
 </head>
 <body>
@@ -45,11 +53,20 @@
         <input id="search" type="input" placeholder="검색하고 싶은 사용자 아이디를 입력해주세요.">
         </input>
         <ul id="suggestLayer"></ul>
+        <div id="loading">
+            <i class="fas fa-spinner fa-pulse"></i>
+        </div>
     </div>
+
     <script>
+
+
         const $layer = document.getElementById("suggestLayer");
+        const $loading = document.getElementById("loading");
+
 
         function drawLayer(items) {
+            console.log(items);
             $layer.innerHTML = items.map(user=>{
                 return `<li class="user">
                 <img src="${user.avatar_url}" width="50px" height="50px"/>
@@ -58,22 +75,47 @@
             }).join("");
         }
 
+        function showLoading() {
+            $loading.style.display = "block";
+        }
+
+        function hideLoading() {
+            $loading.style.display = "none";
+        }
+
 	    const { fromEvent, Observable, from, of } = rxjs;
-        const { pluck, tap, map, mergeMap, debounceTime, filter, distinctUntilChanged } = rxjs.operators;
+        const { pluck, tap, map, mergeMap, debounceTime, filter, distinctUntilChanged, partition } = rxjs.operators;
         const { ajax } = rxjs.ajax;
         
-        const user$ = fromEvent(document.getElementById("search"), "keyup")
-                      .pipe(
-                            debounceTime(300), // 300ms 뒤에 데이터를 전달한다.
-                            map(event => event.target.value), 
-                            distinctUntilChanged(), // 특수키가 입력된 경우에는 나오지 않기 위해 중복 데이터 처리
-                            filter(query => query.trim().length > 0),
-                            mergeMap(query => ajax.getJSON(`https://api.github.com/search/users?q=${query}`))
-                      );
-        user$.subscribe(v => {
-            console.log(v);
+        // Observable이 분기 되야한다.
+        // 입력값이 0 보다 클때는 ajax 호출
+        // 입력값이 0 일때는 reset 호출
+        const [user$, reset$] = fromEvent(document.getElementById("search"), "keyup")
+        .pipe(
+            debounceTime(300),
+            map(event => event.target.value),
+            distinctUntilChanged(),
+            // 조건을 만족하면 user$, 그렇지 않으면 reset$
+            partition(query=>query.trim().length>0)
+        );
+
+        user$
+        .pipe(
+            tap(showLoading),
+            mergeMap(query => ajax.getJSON(`https://api.github.com/search/users?q=${query}`)),
+            tap(hideLoading),
+        )
+        .subscribe(v => {
             drawLayer(v.items);
         });
+
+        reset$
+        .pipe(
+            tap(value => $layer.innerHTML = "")
+        )
+        .subscribe();
+
+
     </script>
 </body>
 </html>

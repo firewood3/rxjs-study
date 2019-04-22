@@ -10,7 +10,7 @@
 <body>
     <script>
 	    const { of } = rxjs;
-        const { tap, map, mergeMap, mergeAll, merge } = rxjs.operators;
+        const { tap, map, mergeMap, mergeAll, merge, partition,switchAll, switchMap } = rxjs.operators;
     
         console.log("---------merge-----------")
         // merge는 여러개의 Observable들을 하나로 합쳐 Observable을 만드는 오퍼레이터
@@ -44,6 +44,24 @@
             mergeMap(value=>of(value+1,value+2, value+3))
         )
         .subscribe(
+            value=>{console.log(value)}
+        );
+
+        console.log("---------partition-----------")
+        // 특정 조건에 따라 Observable이 분기기되야할 때 사용한다.
+        // 조건부가 참인 경우와 거짓인 경우에 대해 두 개의 Observable을 반환한다.
+        // filter는 조건부가 참인 경우에 대한 Observable만 생성한다.
+        
+        const [odd$, even$] =
+        of(1,2,3,4,5,6,7,8,9,10)
+        .pipe(
+            partition(x=>x%2 === 1)
+        );
+
+        odd$.subscribe(
+            value=>{console.log(value)}
+        );
+        even$.subscribe(
             value=>{console.log(value)}
         );
     </script>
