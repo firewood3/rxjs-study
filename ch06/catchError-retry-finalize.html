@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of, interval, throwError } = rxjs;
+        const { retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll } = rxjs.operators;
+        
+        console.log('---------- catchError ---------');
+        /*
+         * catchError
+         * Error를 catch하는 오퍼레이터 return 으로 어떤 옵저버블을 반환할지 선택할 수 있음
+         * 1. throwError 반환(Ovserver.error 호출)
+         * 2. 현재 옵저버블 반환(재구독 - 에러가 발생할때마다 재구독 되므로 무한루프 조심..)
+         * 3. 새로운 옵저버블 반환(재구독은 아님)
+         */
+        of(1,2,3,4,5,6,7,8,9)
+        .pipe(
+            mergeMap(val=>{
+                if(val>5) {return throwError('Error!');}
+                return of(val);
+            }),
+            catchError((error, currentObservable)=>{
+                console.log(error);
+                return throwError(error);
+                // return currentObservable;
+                // return of(3,3,3,3,6);
+            })
+        )
+        .subscribe({
+            next: val => console.log(val),
+            error: val => console.log(`${val}: 에러 발생 후 종료(unsubscribe)`)
+        });
+
+        console.log('---------- retry ---------');
+        /*
+         * retry(n)
+         * 에러가 발생한 경우 소스 옵저버블을 n 번동안 재 구독한다.(소스 옵저버블의 미러를 반환..!?)
+         * n+1 번째 에러가 발생한 경우 Ovserver.error를 호출한다.
+         * 참고: http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-retry
+         */
+        of(1,2,3,4,5,6,7,8,9)
+        .pipe(
+            mergeMap(val=>{
+                if(val>5) {return throwError('Error!');}
+                return of(val);
+            }),
+            retry(2)
+        )
+        .subscribe({
+            next: val => console.log(val),
+            error: val => console.log(`${val}: 재 구독 2회 후 종료`)
+        });
+
+        console.log('---------- finalize ---------');
+        /*
+         * finalize
+         * 옵저버블이 error나 complete되었을 때 호출되는 오퍼레이터이다.
+         * 옵저버의 error나 complete가 먼저 호출되고 나서 호출된다.
+         * error나 complete가 발생하였을 때 후처리를 위해 사용하면 유용하다.
+         */
+         of(1,2,3,4,5,6,7,8,9)
+        .pipe(
+            mergeMap(val=>{
+                if(val>5) {return throwError('Error!');}
+                return of(val);
+            }),
+            catchError((error, currentObservable)=>{
+                return throwError(error);
+            }),
+            tap(value=>console.log(`${value}: tap 오퍼레이터`)), // 에러가 발생 시 잡을 수 없음
+            finalize(value=>console.log(`${value}: finalize 오퍼레이터`)) // 에러(error) or 완료(complete) 시 잡을 수 있음
+        )
+        .subscribe({
+            next: val => console.log(val),
+            error: val => console.log(`${val}: 에러 발생`),
+            complete: val => console.log(`${val}: 완료`)
+        });
+    </script>
+</body>
+</html>

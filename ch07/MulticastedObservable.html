@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+
+        var subject = new Subject();
+        let num$ = fromEvent(document, "click")
+                .pipe(
+                    pluck('offsetX'),
+                    tap(value=>console.log(`click : ${value}`)),
+                    // multicast(subject)
+                    publish()
+                );
+        num$.connect();
+
+
+        let odd$ = num$
+        .pipe(
+            tap(value=>console.log(`odd input : ${value}`)),
+            filter(value=>value%2==1)
+        );
+        odd$.subscribe(value=>console.log(`odd : ${value}`));
+
+        let even$ = num$
+        .pipe(
+            tap(value=>console.log(`even input : ${value}`)),
+            filter(value=>value%2==0)
+        );
+        even$.subscribe(value=>console.log(`even : ${value}`));
+
+    </script>
+</body>
+</html>

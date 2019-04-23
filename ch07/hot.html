@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll } = rxjs.operators;
+
+        const obs$ = fromEvent(document, 'click')
+                        .pipe(
+                            tap(v=>console.log(v)),
+                            map(event => ({ clientX: event.clientX, clientY: event.clientY }))
+                        );
+    
+         const sub1 = obs$.subscribe(val => {
+          console.log('Sub1:', val);
+        });
+
+        setTimeout(() => {
+          console.log('Start sub2');
+          const sub2 = obs$.subscribe(val => {
+            console.log('Sub2:', val);
+          });
+        }, 4000);
+    </script>
+</body>
+</html>

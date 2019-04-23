@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { fromEvent, Observable, from, of, interval, throwError } = rxjs;
+        const { retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll } = rxjs.operators;
+        
+        /*
+          switchAll 오퍼레이터
+          - mergeAll 처럼 Observable을 입력으로 받고 입력받은 Observable을 평탄화 한다.
+          - 가장 최근에 들어온 Observable을 구독하고 이전의 구독 대상인 Observable을 구독 취소 하는 오퍼레이터
+          - Observable{Observable{value}} => Observable{value}
+         */
+        fromEvent(document, 'click').pipe(
+            tap(()=> console.log('click')),
+            map(event=>interval(1000)), // 비동기의 반복적인 호출로 바꾸어버림
+            // mergeAll(),
+            switchMap(),
+        )
+        .subscribe(
+            x=>console.log(x)
+        );
+        
+        /*
+        -mergeAll-
+        3번 클릭 했을 때, 이전의 Observable(Interval)이 그대로 남아있음
+        map => Observable(Observable(Interval), Observable(Interval), Observable(Interval))
+        mergeAll => Observable(0 ... 1 ... 2 ... 0 ... 3 ... 1 ... 4 ... 2 ... 0 ... 5 ... 3 ... 1 ...)
+
+        sibscribe => click ... 0 ... 1 ... click ... 2 ... 0 ... 3 ... 1 ... click 4 ... 2 ... 0 ... 5 ... 3 ... 1 ...
+        */
+
+        /*
+        -switchAll-
+        3번 클릭 했을 때, 이전의 Observable(Interval)은 남아있지 않고 현재의 Observable(Interval)만 남아있다.
+        map => Observable(Observable(Interval))
+        switchAll => Observable(1 ... 2 ...)
+        subscribe => click ... 1 ... 2 ... click ... 1 ... 2 ... click ... 1 ... 2 ...
+        */
+    </script>
+</body>
+</html>
