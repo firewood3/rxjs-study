@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { ReplaySubject, BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+
+        const subject = new ReplaySubject(2);
+        
+        subject.subscribe({
+            next: (v) => console.log(`observerA: ${v}`),
+            complete: () => console.log("observerA completed")
+        });
+        
+        subject.next(1);
+        subject.next(2);
+        subject.next(3);
+        subject.next(4);
+
+        subject.subscribe({
+            next: (v) => console.log(`observerB: ${v}`),
+            complete: () => console.log("observerB completed")
+        });
+
+        subject.complete();
+
+        setTimeout(()=>{
+            subject.subscribe({
+                next: (v)=>console.log(`observerC: ${v}`),
+                complete: ()=>console.log("observerC completed")
+            });
+        }, 2000);
+    </script>
+</body>
+</html>

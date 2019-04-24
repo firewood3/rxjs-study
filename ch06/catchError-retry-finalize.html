@@ -28,9 +28,9 @@
             }),
             catchError((error, currentObservable)=>{
                 console.log(error);
-                return throwError(error);
+                // return throwError(error);
                 // return currentObservable;
-                // return of(3,3,3,3,6);
+                return of(3,3,3,3,6);
             })
         )
         .subscribe({
@@ -68,7 +68,7 @@
          of(1,2,3,4,5,6,7,8,9)
         .pipe(
             mergeMap(val=>{
-                if(val>5) {return throwError('Error!');}
+                // if(val>5) {return throwError('Error!');}
                 return of(val);
             }),
             catchError((error, currentObservable)=>{
@@ -80,7 +80,7 @@
         .subscribe({
             next: val => console.log(val),
             error: val => console.log(`${val}: 에러 발생`),
-            complete: val => console.log(`${val}: 완료`)
+            complete: val => {console.log(`${val}: 완료`); return 'ss';}
         });
     </script>
 </body>

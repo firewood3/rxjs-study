@@ -22,7 +22,7 @@
             tap(()=> console.log('click')),
             map(event=>interval(1000)), // 비동기의 반복적인 호출로 바꾸어버림
             // mergeAll(),
-            switchMap(),
+            switchAll(),
         )
         .subscribe(
             x=>console.log(x)

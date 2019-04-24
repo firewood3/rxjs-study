@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { ReplaySubject, BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+        
+        // 저장할 버퍼 크기.
+        // 저장할 시간, 시간이 지나면 구독할때 subject에 보관된 값을 받을 수 없다.
+        const subject = new ReplaySubject(2, 1000);
+        
+        // subscriber 1
+        subject.subscribe(
+            (v) => console.log('Subscriber A:', v)
+        );
+
+        subject.next(1);
+        subject.next(2);
+
+        // subscriber 2
+        setTimeout(() => {
+          subject.subscribe(
+              (v) => {console.log('Subscriber B:', v)}
+          );
+        }, 2000)
+    </script>
+</body>
+</html>

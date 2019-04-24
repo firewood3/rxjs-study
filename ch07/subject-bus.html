@@ -10,7 +10,7 @@
 <body>
     <script>
 	    const { fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
-        const { pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll } = rxjs.operators;
+        const { publish, share, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll } = rxjs.operators;
 
         
         /*
@@ -24,23 +24,26 @@
                 .pipe(
                     pluck('offsetX'),
                     tap(value=>console.log(`click : ${value}`)),
+                    publish()
                 );
+        let multi = num$.connect();
+        multi.unsubscribe();
 
-        const subject = new Subject();
-        num$.subscribe(subject);
+        // const subject = new Subject();
+        // num$.subscribe(subject);
 
-        // let odd$ = num$
-        let odd$ = subject
+        let odd$ = num$
+        // let odd$ = subject
         .pipe(
-            tap(value=>console.log(`odd input : ${value}`)),
+            // tap(value=>console.log(`odd input : ${value}`)),
             filter(value=>value%2==1)
         );
         odd$.subscribe(value=>console.log(`odd : ${value}`));
 
-        // let even$ = num$
-        let even$ = subject
+        let even$ = num$
+        // let even$ = subject
         .pipe(
-            tap(value=>console.log(`even input : ${value}`)),
+            // tap(value=>console.log(`even input : ${value}`)),
             filter(value=>value%2==0)
         );
         even$.subscribe(value=>console.log(`even : ${value}`));

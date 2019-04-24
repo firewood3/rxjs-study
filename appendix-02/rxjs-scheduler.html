@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { animationFrameScheduler, queueScheduler, asyncScheduler, asapScheduler, BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { observeOn, publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+
+        console.log('start');
+        
+        // of(1, 2, 3, asapScheduler)
+        // .subscribe({
+        //     next: x=>console.log(x)
+        // });
+        
+
+        // asyncScheduler.schedule(function work(value) {
+        //     console.log('aaa');
+        // }, 1000) ;
+
+
+        const async$ = of(1,2,3,4,5)
+        .pipe(
+            observeOn(asyncScheduler, 0)
+        );
+
+        async$.subscribe({
+            next: x=>console.log(x)
+        });
+
+        const asap$ = of(6,7,8,9,10)
+        .pipe(
+            observeOn(asapScheduler, 0)
+        );
+
+        asap$.subscribe({
+            next: x=>console.log(x)
+        });
+        
+
+        const queue$ = of(11,12,13,14,15)
+        .pipe(
+            observeOn(queueScheduler, 0),
+        );
+
+        queue$.subscribe({
+            next: x=>console.log(x)
+        });
+        
+        const annimationFrame$ = of(16,17,18,19,20)
+        .pipe(
+            observeOn(animationFrameScheduler)
+        );
+
+        annimationFrame$.subscribe({
+            next: x=>console.log(x)
+        });
+
+    
+        console.log('end');
+        
+        
+    </script>
+</body>
+</html>
