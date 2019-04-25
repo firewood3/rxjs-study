@@ -12,37 +12,11 @@
 	    const { animationFrameScheduler, queueScheduler, asyncScheduler, asapScheduler, BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
         const { observeOn, publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
 
-        
-        
-        // of(1, 2, 3, asapScheduler)
-        // .subscribe({
-        //     next: x=>console.log(x)
-        // });
-        
-
-        // asyncScheduler.schedule(function work(value) {
-        //     console.log('aaa');
-        // }, 1000) ;
-
         console.log('start');
-
-        of(1,2,3,4,5)
-        .subscribe(x=>console.log(`${x} : Sync Observable`));
-
-        of(6,7,8,9,10)
-        .pipe(observeOn(asyncScheduler))
-        .subscribe({next: x=>console.log(`${x} : asyncScheduler`)});
-
-        of(11,12,13,14,15)
-        .pipe(observeOn(animationFrameScheduler))
-        .subscribe({next: x=>console.log(`${x} : animationFrameScheduler`)});
-
-        of(16,17,18,19,20)
-        .pipe(observeOn(asapScheduler))
-        .subscribe({next: x=>console.log(`${x} : asapScheduler`)});
+        
+        of(1,2,3,4,5).subscribe(x=>console.log(x));
 
         console.log('end');
-        
         
     </script>
 </body>

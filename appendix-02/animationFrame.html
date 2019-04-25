@@ -35,13 +35,28 @@
         //   }
         // }
 
-        let promise = new Promise((resolve, reject)=>{
-            resolve(()=>{
-                element.style.transform = 'translateX(100px)';
-            });
-        });
+        // let promise = new Promise((resolve, reject)=>{
+        //     resolve(()=>{
+        //         element.style.transform = 'translateX(100px)';
+        //     });
+        // });
+
+
+        function step(timestamp) {
+          console.log("1");
+          if (!start) start = timestamp;
+          var progress = timestamp - start;
+          element.style.transform = 'translateX(' + Math.min(progress / 10, 200) + 'px)';
+          if (progress < 2000) {
+            console.log("2");
+            window.setTimeout(()=>step(), 0);
+          }
+        }
+
+        setTimeout(()=>{step()}, 0);
         
-        promise.then(call=>call());
+        
+        // promise.then(call=>call());
 
 
 
