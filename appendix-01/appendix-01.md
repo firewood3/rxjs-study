@@ -1,5 +1,7 @@
 # 부록 1 RxJS의 Subject
 
+*Subject와 ConnectableObservable에서 이전에 생성된 데이터를 Observable에게 전달하기*
+
 Subject는 미리 생성해 놓은 데이터를 Observer에게 전달 할 수 없다.(Hot Observable의 특성)
 <br>=> 이를 극복하기 파생 Subject를 제공하고 파생 Subject는 미리 생성된 데이터를 저장해 둘 수 있다.
 <br>=> Multicasted Observable에서는 이 파생 Subject들을 Operator로 사용할 수 있다.
