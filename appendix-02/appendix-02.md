@@ -9,6 +9,7 @@ https://stackblitz.com/edit/rxjs-scheduler-demo
 
 https://blog.strongbrew.io/what-are-schedulers-in-rxjs/
 
+https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/
 ```js
 console.log("script start")
 setTimeout(function(){

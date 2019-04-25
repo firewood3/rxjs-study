@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { AsyncSubject, ReplaySubject, BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+
+        // WebApi와 queue를 사용하는 비동기는 아니다.
+        // subject의 complete를 호출하면 Observer에게 마지막 데이터를 callback 해주는 계념인듯하다.
+        const subject = new AsyncSubject();
+
+        subject.next(1);
+        subject.next(2);
+        
+        subject.subscribe({
+            next: (v) => console.log(`Subscriber: ${v}`),
+            complete: () => console.log("Subscriber completed")
+        });
+
+        subject.next(3);
+        subject.next(4);
+        subject.next(5);
+
+        subject.complete();
+    </script>
+</body>
+</html>

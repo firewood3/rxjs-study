@@ -14,22 +14,22 @@
         
         // 저장할 버퍼 크기.
         // 저장할 시간, 시간이 지나면 구독할때 subject에 보관된 값을 받을 수 없다.
+        // const subject = new ReplaySubject(2);
         const subject = new ReplaySubject(2, 1000);
         
-        // subscriber 1
+        subject.next(1);
+        subject.next(2);
+
         subject.subscribe(
             (v) => console.log('Subscriber A:', v)
         );
-
-        subject.next(1);
-        subject.next(2);
 
         // subscriber 2
         setTimeout(() => {
           subject.subscribe(
               (v) => {console.log('Subscriber B:', v)}
           );
-        }, 2000)
+        }, 2000);
     </script>
 </body>
 </html>

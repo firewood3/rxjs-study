@@ -12,18 +12,19 @@
 	    const { BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
         const { publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
 
-        const obs$ = Observable.create(function subscribe(observer){
-            observer.next(1);
-            observer.next(2);
-            // observer.complete();
-            // return function(){
-            //     console.log('observable callback');
-            // }
+        const subject = new BehaviorSubject("start");
+        
+        subject.subscribe({
+            next: (v)=>console.log(`observerA: ${v}`)
         });
 
-        obs$.subscribe({
-            next: (v)=>console.log(`observer: ${v}`)
+        subject.next(1);
+        subject.next(2);
+        subject.subscribe({
+            next: (v)=>console.log(`observerB: ${v}`)
         });
+
+        
     </script>
 </body>
 </html>

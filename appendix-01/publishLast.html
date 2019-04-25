@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.4.0/rxjs.umd.js"></script>
+</head>
+<body>
+    <script>
+	    const { BehaviorSubject, fromEvent, Observable, from, of, interval, throwError, Subject } = rxjs;
+        const { publishLast, publishReplay, publishBehavior, publish, take, mapTo, pluck, retry, tap, map, mergeMap, filter, partition, catchError, finalize, switchAll, mergeAll, multicast } = rxjs.operators;
+
+        // const multiObs$ = fromEvent(document, "click")
+        // .pipe(
+        //     pluck("offsetX"),
+        //     publishLast()
+        // );
+        // const multiObsConnection = multiObs$.connect();
+
+        // multiObs$.subscribe({
+        //     next: (v)=>console.log(`observerA: ${v}`),
+        //     complete: ()=>console.log('subscriber completed')
+        // });
+        
+        // multiObsConnection.unsubscribe();
+        // setTimeout(()=>{
+        //     multiObsConnection.onCompleted();
+        //     multiObsConnection.unsubscribe();
+        // }, 2000);
+
+        // subject가 complete될때, subject는 마지막 값을 전달함
+        const multiObs$=interval(1000)
+        .pipe(
+            take(2), // 0, 1
+            publishLast()
+        );
+        multiObs$.connect();
+
+        multiObs$.subscribe({
+            next: (v)=>console.log(`observerA: ${v}`),
+            complete: ()=>console.log('subscriber completed')
+        });
+        
+        // hot Observerable을 publishLast()사용하여 connectable Observable(multicast)로 만들고 
+        // subject.complete를 호출하여 asyncSubject의 기능을 사용해보려 하였으나, 
+        // connectable Observable에 내장되에 있는 subject의 complete를 호출하는 방법을 몰라서
+        // Cold Observable을 connectable Observable로 만들어서 publishLast 테스트 코드를 만들었다.
+        // connectable Observable에 내장되어있는 subject의 complete를 호출하는 방법을 참조하는 방법을 알고싶다..
+        // connectable Observable의 unsubscribe로는 subject의 complete를 호출 안된다.
+    </script>
+</body>
+</html>
