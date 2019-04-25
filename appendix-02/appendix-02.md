@@ -69,21 +69,6 @@ observeOn 오퍼레이터에 스케줄러의 타입을 명시하여 Observable�
 - asapScheduler: cb(next())을 MicorTask Queue에 push
 - animationFrameScheduler: cb(next())을 AnimationFrame Queue에 push
 
-동기적으로 작동하는 Observable
-```js
-console.log('start'); // call stack 에서 바로 실행
-of(1,2,3,4,5).subscribe(x=>console.log(x)); // call stack 에서 바로 실행
-console.log('end'); // call stack 에서 바로 실행
-
-// start
-// 1      
-// 2
-// 3
-// 4
-// 5
-// end
-```
-
 비동기로 작동하는 Observable
 ```js
 console.log('start');
